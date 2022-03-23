@@ -23,6 +23,9 @@ module.exports = (passport) => {
         
         // We will assign the `sub` property on the JWT to the database ID of user
         User.findOne({_id: jwt_payload.sub}, function(err, user) {
+            // Check expiry date, returning an error if it was expired
+            if (Math.floor(Date.now() / 1000) > jwt_payload.exp)
+                return done(err, false)
             
             // This flow look familiar?  It is the same as when we implemented
             // the `passport-local` strategy
